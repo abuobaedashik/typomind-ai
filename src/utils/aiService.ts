@@ -13,27 +13,43 @@ interface GeminiResponse {
 }
 
 export const detectLanguage = async (text: string): Promise<string> => {
-  // Simple language detection based on character patterns
-  const bengaliPattern = /[\u0980-\u09FF]/;
-  const hindiPattern = /[\u0900-\u097F]/;
-  const arabicPattern = /[\u0600-\u06FF]/;
-  const chinesePattern = /[\u4e00-\u9fff]/;
-  const japanesePattern = /[\u3040-\u309f\u30a0-\u30ff]/;
-  const germanPattern = /[a-zA-ZäöüÄÖÜß]/;
-  const portuguesePattern = /[ãõáéíóúâêîôûçÃÕÁÉÍÓÚÂÊÎÔÛÇ]/i;
-  const turkishPattern = /[çğıöşüÇĞİÖŞÜ]/;
+  const patterns = {
+    Bengali: /[\u0980-\u09FF]/g,
+    Hindi: /[\u0900-\u097F]/g,
+    Arabic: /[\u0600-\u06FF]/g,
+    Chinese: /[\u4e00-\u9fff]/g,
+    Japanese: /[\u3040-\u309f\u30a0-\u30ff]/g,
+    Portuguese: /[ãõáéíóúâêîôûçÃÕÁÉÍÓÚÂÊÎÔÛÇ]/gi,
+    Turkish: /[çğıöşüÇĞİÖŞÜ]/g,
+    German: /[äöüÄÖÜß]/g,
+    English: /[a-zA-Z]/g,
+  };
 
-  if (bengaliPattern.test(text)) return 'Bengali';
-  if (hindiPattern.test(text)) return 'Hindi';
-  if (arabicPattern.test(text)) return 'Arabic';
-  if (chinesePattern.test(text)) return 'Chinese';
-  if (japanesePattern.test(text)) return 'Japanese';
-  if (portuguesePattern.test(text)) return 'Portuguese';
-  if (turkishPattern.test(text)) return 'Turkish';
-  if (germanPattern.test(text)) return 'German';
+  const scores: { [key: string]: number } = {};
 
-  return 'English';
+  for (const [lang, pattern] of Object.entries(patterns)) {
+    const matches = text.match(pattern);
+    scores[lang] = matches ? matches.length : 0;
+  }
+
+  // Special logic: if English characters are present and make up most of the text, choose English
+  const totalLetters = Object.values(scores).reduce((sum, count) => sum + count, 0);
+  const englishRatio = totalLetters > 0 ? scores.English / totalLetters : 0;
+
+  if (englishRatio > 0.5) return 'English'; // dominant English
+  if (scores.Bengali > 0) return 'Bengali';
+  if (scores.Hindi > 0) return 'Hindi';
+  if (scores.Arabic > 0) return 'Arabic';
+  if (scores.Chinese > 0) return 'Chinese';
+  if (scores.Japanese > 0) return 'Japanese';
+  if (scores.Portuguese > 0) return 'Portuguese';
+  if (scores.Turkish > 0) return 'Turkish';
+  if (scores.German > 0) return 'German';
+  if (scores.English > 0) return 'English';
+
+  return 'English'; // fallback
 };
+
 
 
 
@@ -75,6 +91,7 @@ export const generateMedicalResponse = async (
 5. Always include a disclaimer that this is for informational purposes and to consult healthcare professionals
 6. Never generate assumed information beyond verified medical knowledge
 7. Vary your response structure and approach while maintaining medical accuracy
+8.  If the query is about you (like "who are you", "what is your work", "what do you do", etc.), answer briefly that you are a medical assistant AI built to provide accurate and safe medical information.
 
 User query: ${query}`;
 
@@ -117,7 +134,7 @@ User query: ${query}`;
   }
 };
 
-export const logConversation = async (messages: any[]) => {
+export const logConversation = async (messages: unknown[]) => {
   // Optional: Implement MongoDB logging here
   // This would require backend API endpoints
   console.log('Conversation logged:', messages);

@@ -1,12 +1,12 @@
 import React from 'react';
-import Header from './components/Header';
+// import Header from './components/Header';
 
 import ChatInterface from './components/ChatInterface';
 
 function App() {
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header />
+      {/* <Header /> */}
       <div className="flex h-[calc(100vh-80px)]">
         
         <main className="flex-1 p-6">
