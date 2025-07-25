@@ -19,15 +19,19 @@ export const detectLanguage = async (text: string): Promise<string> => {
   const arabicPattern = /[\u0600-\u06FF]/;
   const chinesePattern = /[\u4e00-\u9fff]/;
   const japanesePattern = /[\u3040-\u309f\u30a0-\u30ff]/;
+  // German letters: a-z, A-Z plus umlauts and ß
+  const germanPattern = /[a-zA-ZäöüÄÖÜß]/;
 
   if (bengaliPattern.test(text)) return 'Bengali';
   if (hindiPattern.test(text)) return 'Hindi';
   if (arabicPattern.test(text)) return 'Arabic';
   if (chinesePattern.test(text)) return 'Chinese';
   if (japanesePattern.test(text)) return 'Japanese';
+  if (germanPattern.test(text)) return 'German';
   
   return 'English';
 };
+
 
 export const generateMedicalResponse = async (
   query: string,
