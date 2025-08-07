@@ -3,11 +3,11 @@ import { Heart, Shield, Globe } from 'lucide-react';
 
 const Header: React.FC = () => {
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+    <header className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-3">
-            <div className="bg-blue-600 p-2 rounded-lg">
+            <div className="p-2 bg-blue-600 rounded-lg">
               <Heart className="w-6 h-6 text-white" />
             </div>
             <div>
