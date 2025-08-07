@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, AlertCircle } from 'lucide-react';
 import { detectLanguage, generateMedicalResponse } from '../utils/aiService';
@@ -32,7 +33,7 @@ const ChatInterface: React.FC = () => {
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputText('');
     setIsLoading(true);
 
@@ -48,7 +49,7 @@ const ChatInterface: React.FC = () => {
         language: detectedLanguage,
       };
 
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -57,7 +58,7 @@ const ChatInterface: React.FC = () => {
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -71,25 +72,25 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="flex flex-col h-full overflow-hidden bg-white border-4 min-h-screen max-w-[1980px] border-blue-800 rounded-lg shadow-lg">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 flex items-center space-x-3">
-        <div className="bg-blue-500 p-2 rounded-full">
+      <div className="flex items-center p-4 space-x-3 text-white">
+        <div className="p-2 rounded-full">
           <Bot className="w-6 h-6" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">Medical Assistant</h2>
-          <p className="text-blue-100 text-sm">Ask me any health-related questions</p>
+          <p className="text-sm text-blue-100">Ask me any health-related questions</p>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-50">
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 mt-8">
+          <div className="mt-8 text-center text-gray-500">
             <Bot className="w-12 h-12 mx-auto mb-4 text-blue-600" />
             <p className="text-lg font-medium">Welcome to Medical Assistant</p>
-            <p className="text-sm mt-2">
+            <p className="mt-2 text-sm">
               I can help you with health-related questions in multiple languages.
               <br />
               Start by typing your medical query below.
@@ -128,7 +129,7 @@ const ChatInterface: React.FC = () => {
                 }`}
               >
                 <p className="text-sm whitespace-pre-wrap">{message.text}</p>
-                <p className="text-xs mt-1 opacity-70">
+                <p className="mt-1 text-xs opacity-70">
                   {message.timestamp.toLocaleTimeString()}
                 </p>
               </div>
@@ -138,15 +139,15 @@ const ChatInterface: React.FC = () => {
 
         {isLoading && (
           <div className="flex justify-start">
-            <div className="flex items-start space-x-2 max-w-xs">
-              <div className="bg-green-600 text-white p-2 rounded-full">
+            <div className="flex items-start max-w-xs space-x-2">
+              <div className="p-2 text-white bg-green-600 rounded-full">
                 <Bot className="w-4 h-4" />
               </div>
-              <div className="bg-white text-gray-800 border border-gray-200 rounded-lg p-3">
+              <div className="p-3 text-gray-800 bg-white border border-gray-200 rounded-lg">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+                  <div className="w-2 h-2 delay-75 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 delay-150 bg-gray-400 rounded-full animate-bounce"></div>
                 </div>
               </div>
             </div>
@@ -158,7 +159,7 @@ const ChatInterface: React.FC = () => {
       {/* Input */}
       <div className="p-4 bg-white border-t border-gray-200">
         <div className="flex items-center space-x-2">
-          <div className="flex-1 relative">
+          <div className="relative flex-1">
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
@@ -172,7 +173,7 @@ const ChatInterface: React.FC = () => {
           <button
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isLoading}
-            className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="p-3 text-white transition-colors duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="w-5 h-5" />
           </button>
