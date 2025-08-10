@@ -1,30 +1,57 @@
-// import Header from './components/Header';
-
+import { FaHome, FaUser, FaCog, FaRobot } from "react-icons/fa";
 import ChatInterface from "./components/ChatInterface";
+// import { BackgroundBeamsWithCollision } from "./utils/BackgroundEffect";
+
+const menuItems = [
+  { icon: <FaHome size={24} />, label: "Home" },
+  { icon: <FaUser size={24} />, label: "Profile" },
+  { icon: <FaCog size={24} />, label: "Settings" },
+  { icon: <FaRobot size={24} />, label: "Bot" },
+];
 
 function App() {
   return (
-    <div className="min-h-screen border border-black">
-      {/* <Header /> */}
-      <div className="flex ">
-        <main className="flex flex-col items-center w-full gap-3 px-6 border md:flex-row border-b-rose-400">
-          {/* col 1 */}
-          <div className="flex flex-col items-start gap-5 text-left w-full md:w-[15%]">
-            <div>menu</div>
-            <div>menu</div>
-            <div>menu</div>
-            <div>menu</div>
-          </div>
-          {/* col 2 */}
-          <div className="flex flex-col gap-10 border-2 border-green-700 colum-2 w-full md:w-[45%] min-h-screen">
-            content
-          </div>
-          {/* col 3 */}
-          <div className="w-full md:w-[40%]">
-            <div className="h-full max-w-6xl mx-auto border border-black">
-              <ChatInterface />
-            </div>
-          </div>
+    <div className="min-h-screen ">
+      <div className="flex">
+        <main className="flex flex-row w-full overflow-hidden">
+          {/* Left Sidebar - 8% width */}
+          <nav className="flex flex-col items-center min-h-screen overflow-hidden justify-start gap-8 py-8 w-[8%] bg-gray-100 border-r border-gray-300">
+            {/* {menuItems.map(({ icon, label }, i) => (
+              <button
+                key={i}
+                title={label}
+                className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
+              >
+                {icon}
+              </button>
+            ))} */}
+            <button
+              title="Help"
+              className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
+            >
+              {menuItems[0].icon}
+            </button>
+            <button
+              title="Feedback"
+              className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
+            >
+              {menuItems[2].icon}
+              <FaRobot size={24} />
+            </button>
+            <button
+              title="Logout"
+              className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
+            >
+               {menuItems[3].icon}
+            </button>
+          </nav>
+          {/* Right side ai prompt - 52% width */}
+               <section className="w-[92%] border-r border-gray-300  items-center justify-center ">
+              <div className="w-full h-full overflow-hidden rounded-md">
+                <ChatInterface />
+              </div>
+            </section>
+          
         </main>
       </div>
     </div>
