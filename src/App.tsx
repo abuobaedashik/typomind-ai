@@ -1,5 +1,5 @@
 import { FaHome, FaUser, FaCog, FaRobot } from "react-icons/fa";
-import ChatInterface from "./components/ChatInterface";
+import { NavLink, Outlet } from "react-router";
 // import { BackgroundBeamsWithCollision } from "./utils/BackgroundEffect";
 
 const menuItems = [
@@ -13,9 +13,9 @@ function App() {
   return (
     <div className="min-h-screen ">
       <div className="flex">
-        <main className="flex flex-row w-full overflow-hidden">
+        <main className="flex flex-row w-full ">
           {/* Left Sidebar - 8% width */}
-          <nav className="flex flex-col items-center min-h-screen overflow-hidden justify-start gap-8 py-8 w-[8%] bg-gray-100 border-r border-gray-300">
+          <nav className="flex flex-col sticky top-0 items-center min-h-screen overflow-hidden justify-start gap-8 py-8 w-[8%] bg-gray-100 border-r border-gray-300">
             {/* {menuItems.map(({ icon, label }, i) => (
               <button
                 key={i}
@@ -25,30 +25,34 @@ function App() {
                 {icon}
               </button>
             ))} */}
-            <button
-              title="Help"
+            <NavLink to={"/"}
+              title="Home"
               className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
             >
               {menuItems[0].icon}
-            </button>
-            <button
-              title="Feedback"
+                 
+            </NavLink>
+            <NavLink to={"/setting"}
+              title="Setting"
               className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
             >
               {menuItems[2].icon}
-              <FaRobot size={24} />
-            </button>
-            <button
-              title="Logout"
+              {/* <FaRobot size={24} /> */}
+             
+            </NavLink>
+            <NavLink to={"/bot"}
+              title="Bot"
               className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
             >
                {menuItems[3].icon}
-            </button>
+              
+            </NavLink>
           </nav>
           {/* Right side ai prompt - 52% width */}
-               <section className="w-[92%] border-r border-gray-300  items-center justify-center ">
+               <section className="w-[92%] border-r overflow-hidden border-gray-300  items-center justify-center ">
               <div className="w-full h-full overflow-hidden rounded-md">
-                <ChatInterface />
+               {/* <ChatInterface/> */}
+                <Outlet/>
               </div>
             </section>
           

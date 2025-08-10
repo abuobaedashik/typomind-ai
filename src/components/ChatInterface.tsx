@@ -100,7 +100,7 @@ const ChatInterface: React.FC = () => {
         <div className="flex-1 p-4 space-y-4 overflow-y-auto ">
           {messages.length === 0 && (
             <div className="mt-8 text-center text-gray-500">
-              <p className="text-lg font-medium">
+              <p className="text-2xl font-bold">
                 Welcome to Medical Assistant
               </p>
               <p className="mt-2 text-sm">
@@ -199,7 +199,7 @@ const ChatInterface: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center mt-2 text-xs text-gray-500">
-          <AlertCircle className="w-3 h-3 mr-1" />
+          <AlertCircle className="w-3 h-3 mr-1 font-bold" />
           This is for informational purposes only. Always consult healthcare
           professionals.
         </div>
