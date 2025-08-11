@@ -1,6 +1,5 @@
 import { FaHome, FaUser, FaCog, FaRobot } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router";
-// import { BackgroundBeamsWithCollision } from "./utils/BackgroundEffect";
 
 const menuItems = [
   { icon: <FaHome size={24} />, label: "Home" },
@@ -32,14 +31,6 @@ function App() {
               {menuItems[0].icon}
                  
             </NavLink>
-            <NavLink to={"/setting"}
-              title="Setting"
-              className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
-            >
-              {menuItems[2].icon}
-              {/* <FaRobot size={24} /> */}
-             
-            </NavLink>
             <NavLink to={"/bot"}
               title="Bot"
               className="flex items-center justify-center w-10 h-10 text-gray-700 transition rounded-md hover:text-blue-600 hover:bg-blue-100"
@@ -47,6 +38,14 @@ function App() {
                {menuItems[3].icon}
               
             </NavLink>
+
+            <div className="mt-3 text-base font-normal ">Bengali</div>
+            <div className="mt-3 text-base font-normal ">Hindi</div>
+            <div className="mt-3 text-base font-normal ">Chinese </div>
+            <div className="mt-3 text-base font-normal ">German</div>
+            <div className="mt-3 text-base font-normal ">Turkish</div>
+            <div className="mt-3 text-base font-normal ">Portuguese </div>
+            <div className="mt-3 text-base font-normal ">Portuguese </div>
           </nav>
           {/* Right side ai prompt - 52% width */}
                <section className="w-[92%] border-r overflow-hidden border-gray-300  items-center justify-center ">

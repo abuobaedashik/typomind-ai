@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, AlertCircle } from "lucide-react";
 import { detectLanguage, generateMedicalResponse } from "../utils/aiService";
 import bot from "../Accets/bot.png";
-import { BackgroundBeamsWithCollision } from "../utils/BackgroundEffect";
+
 
 interface Message {
   id: string;
@@ -96,8 +96,7 @@ const ChatInterface: React.FC = () => {
       </div>
 
       {/* Messages */}
-      <BackgroundBeamsWithCollision>
-        <div className="flex-1 p-4 space-y-4 overflow-y-auto ">
+         <div className="flex-1 p-4 space-y-4 overflow-y-auto ">
           {messages.length === 0 && (
             <div className="mt-8 text-center text-gray-500">
               <p className="text-2xl font-bold">
@@ -174,7 +173,6 @@ const ChatInterface: React.FC = () => {
 
           <div ref={messagesEndRef} />
         </div>
-      </BackgroundBeamsWithCollision>
 
       {/* Input Box Always at Bottom */}
       <div className="p-4 px-6 bg-white border-t md:px-20 lg:px-36">
