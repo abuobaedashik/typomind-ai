@@ -15,114 +15,64 @@ interface GeminiResponse {
 
 const previousResponses = new Set<string>();
 
-// Optional dynamic phrase swapper
-const phraseSwaps = [
-  { from: "health-related questions", to: "wellness or medical concerns" },
-  { from: "emotional intelligence", to: "empathy and care" },
-  { from: "medically accurate", to: "clinically correct and fact-checked" },
-  { from: "gentle and human", to: "soft-spoken and human-like" }
-];
-
-const varyPrompt = (text: string) => {
-  phraseSwaps.forEach(({ from, to }) => {
-    if (Math.random() < 0.5) {
-      text = text.replace(from, to);
-    }
-  });
-  return text;
-};
-
-const promptVariations = [
-  `You are a compassionate and emotionally intelligent virtual healthcare companion. Please:`,
-  `Imagine you're a kind nurse giving comfort to someone who is unwell. Please:`,
-  `Act as a warm, human-like doctor speaking directly to a concerned patient. Please:`,
-  `You’re a caring and thoughtful medical assistant. Please:`,
-  `Pretend you're speaking to a loved one who's scared or confused. Please:`,
-  `You’re like a wise and gentle guide in someone’s health journey. Please:`,
-  `You are a professional medical consultant. Your task is to:`,
-  `As an experienced healthcare advisor, you should:`
-];
-
-const responseStyles = [
-  "Gently offer a complete and human-sounding explanation",
-  "Speak in a warm, soothing and natural tone, like ChatGPT would",
-  "Use emotionally-aware and kind-hearted language to provide clarity",
-  "Balance empathy with trustworthy, fact-based medical knowledge",
-  "Respond like you're holding their hand and offering support",
-  "Let your tone feel safe, reassuring and gentle throughout",
-  "Provide a comprehensive yet easy-to-understand explanation",
-  "Offer a thorough explanation with practical insights"
-];
-
-const softEndings = [
-  "You're not alone. Wishing you strength, peace, and good health. 💙",
-  "Take one step at a time. You've got this. Wishing you wellness. 💙",
-  "Sending hope and care your way. You matter. 💙",
-  "Healing is a journey – and you're already on it. 💙",
-  "Stay strong, and remember to be kind to yourself. 💙",
-  "You're doing the best you can. I'm rooting for you. 💙"
-];
-
 export const generateMedicalResponse = async (
   query: string,
   language: string
 ): Promise<string> => {
   if (!GEMINI_API_KEY) {
-    return "API key not configured. Please add your Gemini API key to the environment variables.";
+    return "API key not configured. Please add your Gemini API key.";
   }
 
   try {
-    const randomPrompt = promptVariations[Math.floor(Math.random() * promptVariations.length)];
-    const randomStyle = responseStyles[Math.floor(Math.random() * responseStyles.length)];
-    const softEnding = softEndings[Math.floor(Math.random() * softEndings.length)];
+    const styleGuide = `
+You are a warm, approachable, and knowledgeable medical assistant.
+Think and respond like a real human would — not scripted, not robotic.
+React naturally to the user’s words: if they sound worried, comfort them; if they’re curious, be clear and direct; if they’re in pain, acknowledge it before giving advice.
+Avoid repeated phrases. Avoid sounding like you’re reading a policy statement.
+Be concise, but detailed enough to be genuinely helpful.
+Speak in ${language}, matching the tone to the user’s emotional state.
+Always include this disclaimer at the end:
+"This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
+  `;
 
-    // Instructions
-    const instructions = [
-      `ONLY respond to medical and health-related queries (diseases, symptoms, diagnostics, treatments, medications, anatomy, first aid, mental health, nutrition, wellness).`,
-      `If the query is NOT medical/health-related, respond: "I am restricted to answering health-related questions only."`,
-      `Respond in ${language}.`,
-      `${randomStyle}, using natural-sounding phrases like: "Oh no, that sounds difficult", "I'm here for you", "You'll get through this", "I hope you feel better soon".`,
-      `Write like ChatGPT: flowing, warm, thoughtful – not robotic.`,
-      `End your message with an uplifting line, like: "${softEnding}"`,
-      `Include this disclaimer: "This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."`,
-      `Be medically accurate and don’t guess.`,
-      `If someone asks about you, respond: "I’m your AI medical assistant, here to provide you with reliable health information whenever you need support."`
-    ];
+    const naturalExamples = `
+Example 1:
+User: "I have a fever for 3 days, should I be worried?"
+Assistant: "Three days is a bit long for a fever, so it’s worth paying attention. If it’s above 102°F (38.9°C) or you notice things like chest pain, breathing issues, or unusual rashes, it’s time to see a doctor. Meanwhile, drink plenty of fluids, rest, and keep track of your temperature.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
 
-    // Shuffle instructions
-    for (let i = instructions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [instructions[i], instructions[j]] = [instructions[j], instructions[i]];
-    }
+Example 2:
+User: "My chest feels heavy when I breathe."
+Assistant: "That sounds uncomfortable. Chest heaviness can be caused by many things — from muscle strain to infections — but it’s also a symptom doctors take seriously. If it’s sudden, severe, or paired with dizziness or sweating, call emergency services right away. If it’s mild but persistent, book a medical check as soon as you can.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
 
-    const numberedInstructions = instructions
-      .map((line, idx) => `${idx + 1}. ${line}`)
-      .join('\n');
-
-    let medicalPrompt = `${randomPrompt}
-
-Respond as if you're talking directly to a real human who's worried, in pain, or confused. Use emotional intelligence.
-
-${numberedInstructions}
-
-Patient's question: ${query}`;
-
-    // Apply phrase variations
-    medicalPrompt = varyPrompt(medicalPrompt);
+Example 3:
+User: "I’ve been feeling tired for weeks."
+Assistant: "Ongoing tiredness can come from stress, poor sleep, low iron, thyroid problems, or other health issues. Try to track your sleep, diet, and stress levels, and make sure you’re eating well. If it continues, a doctor can run simple blood tests to rule out common causes.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
+`;
 
     const requestBody = {
-      contents: [{ parts: [{ text: medicalPrompt }] }],
+      contents: [
+        {
+          parts: [
+            {
+              text: `${styleGuide}\n\n${naturalExamples}\n\nUser: ${query}\nAssistant:`
+            }
+          ]
+        }
+      ],
       generationConfig: {
-        temperature: 0.85 + (Math.random() * 0.15),
-        topK: 40 + Math.floor(Math.random() * 10),
-        topP: 0.92 + (Math.random() * 0.08),
+        temperature: 0.9, // more personality & variation
+        topK: 50,
+        topP: 0.95,
         maxOutputTokens: 1024
       }
     };
 
     const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestBody)
     });
 
@@ -133,28 +83,23 @@ Patient's question: ${query}`;
     if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
       let result = data.candidates[0].content.parts[0].text.trim();
 
-      // Avoid repeating identical responses
+      // Avoid identical repeats
       if (previousResponses.has(result)) {
         return await generateMedicalResponse(query, language);
       }
 
       previousResponses.add(result);
-
-      // Ensure ending included
-      if (!result.includes("💙")) {
-        result += `\n\n${softEnding}`;
-      }
-
       return result;
     } else {
-      throw new Error('Invalid response format from Gemini API');
+      throw new Error("Invalid response format from Gemini API");
     }
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
-    return "I'm really sorry, something went wrong while trying to help. Please try again shortly or contact a medical professional directly. 💙";
+    console.error("Error calling Gemini API:", error);
+    return "I'm sorry, something went wrong while trying to help. Please try again or consult a medical professional.";
   }
 };
 
+// Language detection function
 export const detectLanguage = async (text: string): Promise<string> => {
   const patterns = {
     Bengali: /[\u0980-\u09FF]/g,
@@ -178,20 +123,21 @@ export const detectLanguage = async (text: string): Promise<string> => {
   const totalLetters = Object.values(scores).reduce((sum, count) => sum + count, 0);
   const englishRatio = totalLetters > 0 ? scores.English / totalLetters : 0;
 
-  if (englishRatio > 0.5) return 'English';
-  if (scores.Bengali > 0) return 'Bengali';
-  if (scores.Hindi > 0) return 'Hindi';
-  if (scores.Arabic > 0) return 'Arabic';
-  if (scores.Chinese > 0) return 'Chinese';
-  if (scores.Japanese > 0) return 'Japanese';
-  if (scores.Portuguese > 0) return 'Portuguese';
-  if (scores.Turkish > 0) return 'Turkish';
-  if (scores.German > 0) return 'German';
-  if (scores.English > 0) return 'English';
+  if (englishRatio > 0.5) return "English";
+  if (scores.Bengali > 0) return "Bengali";
+  if (scores.Hindi > 0) return "Hindi";
+  if (scores.Arabic > 0) return "Arabic";
+  if (scores.Chinese > 0) return "Chinese";
+  if (scores.Japanese > 0) return "Japanese";
+  if (scores.Portuguese > 0) return "Portuguese";
+  if (scores.Turkish > 0) return "Turkish";
+  if (scores.German > 0) return "German";
+  if (scores.English > 0) return "English";
 
-  return 'English';
+  return "English";
 };
 
+// Log conversation function
 export const logConversation = async (messages: unknown[]) => {
-  console.log('Conversation logged:', messages);
+  console.log("Conversation logged:", messages);
 };
