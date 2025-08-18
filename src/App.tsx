@@ -77,7 +77,7 @@ function App() {
                   </NavLink>
                 ))}
                 <div className="flex flex-col items-start gap-2 language">
-                  <div className="mt-3 text-[#ffffff]">Choose Language</div>
+                  <div className="mt-3 text-[#ffffff]">Available Language</div>
                   <select
                     defaultValue="English"
                     className="w-full px-2 py-1 mt-auto border border-[#685752] rounded"
@@ -127,7 +127,7 @@ function App() {
                   ))}
 
                   <div className="mt-auto">
-                    <div className="mt-3 text-[#ffffff] text-sm">Choose Language</div>
+                    <div className="mt-3 text-[#ffffff] text-sm">Available Language</div>
                     <select
                       defaultValue="English"
                       className="hidden mt-2 border-none w-28 select select-primary md:block"
