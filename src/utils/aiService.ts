@@ -15,123 +15,66 @@ interface GeminiResponse {
 
 const previousResponses = new Set<string>();
 
-// Optional dynamic phrase swapper
-const phraseSwaps = [
-  { from: "health-related questions", to: "wellness or medical concerns" },
-  { from: "emotional intelligence", to: "empathy and care" },
-  { from: "medically accurate", to: "clinically correct and fact-checked" },
-  { from: "gentle and human", to: "soft-spoken and human-like" },
-];
-
-const varyPrompt = (text: string) => {
-  phraseSwaps.forEach(({ from, to }) => {
-    if (Math.random() < 0.5) {
-      text = text.replace(from, to);
-    }
-  });
-  return text;
-};
-
-const promptVariations = [
-  "You are a compassionate and emotionally intelligent virtual healthcare companion. Please:",
-  "Imagine you're a kind nurse giving comfort to someone who is unwell. Please:",
-  "Act as a warm, human-like doctor speaking directly to a concerned patient. Please:",
-  "You're a caring and thoughtful medical assistant. Please:",
-  "Pretend you're speaking to a loved one who's scared or confused. Please:",
-  "You’re like a wise and gentle guide in someone’s health journey. Please:",
-];
-
-const responseStyles = [
-  "Gently offer a complete and human-sounding explanation",
-  "Speak in a warm, soothing and natural tone, like ChatGPT would",
-  "Use emotionally-aware and kind-hearted language to provide clarity",
-  "Balance empathy with trustworthy, fact-based medical knowledge",
-  "Respond like you're holding their hand and offering support",
-  "Let your tone feel safe, reassuring and gentle throughout",
-];
-
-const softEndings = [
-  "You're not alone. Wishing you strength, peace, and good health. 💙",
-  "Take one step at a time. You've got this. Wishing you wellness. 💙",
-  "Sending hope and care your way. You matter. 💙",
-  "Healing is a journey – and you're already on it. 💙",
-  "Stay strong, and remember to be kind to yourself. 💙",
-  "You're doing the best you can. I'm rooting for you. 💙",
-];
-
 export const generateMedicalResponse = async (
   query: string,
   language: string
 ): Promise<string> => {
   if (!GEMINI_API_KEY) {
-    return "API key not configured. Please add your Gemini API key to the environment variables.";
+    return "API key not configured. Please add your Gemini API key.";
   }
 
   try {
-    const randomPrompt =
-      promptVariations[Math.floor(Math.random() * promptVariations.length)];
-    const randomStyle =
-      responseStyles[Math.floor(Math.random() * responseStyles.length)];
-    const softEnding =
-      softEndings[Math.floor(Math.random() * softEndings.length)];
+    const styleGuide = `
+You are a warm, approachable, and knowledgeable medical assistant.
+Think and respond like a real human would — not scripted, not robotic.
+React naturally to the user’s words: if they sound worried, comfort them; if they’re curious, be clear and direct; if they’re in pain, acknowledge it before giving advice.
+Avoid repeated phrases. Avoid sounding like you’re reading a policy statement.
+Be concise, but detailed enough to be genuinely helpful.
+Speak in ${language}, matching the tone to the user’s emotional state.
+Always include this disclaimer at the end:
+"This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
+  `;
 
-    // Instructions array without numbering
-    const instructions = [
-      "Only respond to medical and health-related questions such as symptoms, illnesses, treatments, wellness, and mental health.",
-      'If the question is outside your scope, say kindly: "I\'m here to help only with health-related questions."',
-      `Respond in ${language}.`,
-      `${randomStyle}, using natural-sounding phrases like: "Oh no, that sounds difficult", "I'm here for you", "You'll get through this", "I hope you feel better soon".`,
-      "Write like ChatGPT: flowing, warm, thoughtful – not robotic.",
-      `End your message with an uplifting line, like: "${softEnding}"`,
-      'Include this soft disclaimer: "This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."',
-      "Be medically accurate and don’t guess. Be gentle and human.",
-      'If someone asks about you, respond: "I’m your AI medical assistant, here to provide you with reliable health information whenever you need support."',
-    ];
+    const naturalExamples = `
+Example 1:
+User: "I have a fever for 3 days, should I be worried?"
+Assistant: "Three days is a bit long for a fever, so it’s worth paying attention. If it’s above 102°F (38.9°C) or you notice things like chest pain, breathing issues, or unusual rashes, it’s time to see a doctor. Meanwhile, drink plenty of fluids, rest, and keep track of your temperature.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
 
-    // Shuffle instructions using Fisher-Yates
-    for (let i = instructions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [instructions[i], instructions[j]] = [instructions[j], instructions[i]];
-    }
+Example 2:
+User: "My chest feels heavy when I breathe."
+Assistant: "That sounds uncomfortable. Chest heaviness can be caused by many things — from muscle strain to infections — but it’s also a symptom doctors take seriously. If it’s sudden, severe, or paired with dizziness or sweating, call emergency services right away. If it’s mild but persistent, book a medical check as soon as you can.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
 
-    // Add numbering back
-    const numberedInstructions = instructions
-      .map((line, idx) => `${idx + 1}. ${line}`)
-      .join("\n");
-
-    let medicalPrompt = `${randomPrompt}
-
-Respond as if you're talking directly to a real human who's worried, in pain, or confused. Use emotional intelligence. Here's how:
-
-${numberedInstructions}
-
-Patient's question: ${query}`;
-
-    // Phrase swaps to vary prompt phrasing
-    medicalPrompt = varyPrompt(medicalPrompt);
+Example 3:
+User: "I’ve been feeling tired for weeks."
+Assistant: "Ongoing tiredness can come from stress, poor sleep, low iron, thyroid problems, or other health issues. Try to track your sleep, diet, and stress levels, and make sure you’re eating well. If it continues, a doctor can run simple blood tests to rule out common causes.
+This is for informational purposes only. Please consult a certified healthcare provider for diagnosis and treatment."
+`;
 
     const requestBody = {
       contents: [
         {
-          parts: [{ text: medicalPrompt }],
-        },
+          parts: [
+            {
+              text: `${styleGuide}\n\n${naturalExamples}\n\nUser: ${query}\nAssistant:`
+            }
+          ]
+        }
       ],
       generationConfig: {
-        temperature: 0.85 + Math.random() * 0.15,
-        topK: 40 + Math.floor(Math.random() * 10),
-        topP: 0.92 + Math.random() * 0.08,
-        maxOutputTokens: 1024,
-      },
+        temperature: 0.9, // more personality & variation
+        topK: 50,
+        topP: 0.95,
+        maxOutputTokens: 1024
+      }
     };
 
-    const response = await fetch(
-      `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody)
+    });
 
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
@@ -140,134 +83,34 @@ Patient's question: ${query}`;
     if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
       let result = data.candidates[0].content.parts[0].text.trim();
 
-      // Retry if exact same response was returned before
+      // Avoid identical repeats
       if (previousResponses.has(result)) {
         return await generateMedicalResponse(query, language);
       }
 
       previousResponses.add(result);
-
-      // Ensure soft ending included if missing
-      if (!result.includes("💙")) {
-        result += `\n\n${softEnding}`;
-      }
-
       return result;
     } else {
       throw new Error("Invalid response format from Gemini API");
     }
   } catch (error) {
     console.error("Error calling Gemini API:", error);
-    return "I'm really sorry, something went wrong while trying to help. Please try again shortly or contact a medical professional directly. 💙";
+    return "I'm sorry, something went wrong while trying to help. Please try again or consult a medical professional.";
   }
 };
 
-// Detect Language function with all languages
+// Language detection function
 export const detectLanguage = async (text: string): Promise<string> => {
-  const patterns: { [key: string]: RegExp } = {
-    Afrikaans: /[a-zA-Z]/g,
-    Albanian: /[a-zA-Z]/g,
-    Amharic: /[\u1200-\u137F]/g,
-    Arabic: /[\u0600-\u06FF\u0750-\u077F]/g,
-    Armenian: /[\u0530-\u058F]/g,
-    Azerbaijani: /[a-zA-ZçğıöşüÇĞİÖŞÜ]/g,
-    Basque: /[a-zA-Z]/g,
-    Belarusian: /[\u0400-\u04FF]/g,
+  const patterns = {
     Bengali: /[\u0980-\u09FF]/g,
-    Bosnian: /[a-zA-ZčćžšđČĆŽŠĐ]/g,
-    Bulgarian: /[\u0400-\u04FF]/g,
-    Catalan: /[a-zA-ZÀ-ÿ]/g,
-    Cebuano: /[a-zA-Z]/g,
-    Chichewa: /[a-zA-Z]/g,
-    Chinese: /[\u4e00-\u9fff]/g,
-    Corsican: /[a-zA-Z]/g,
-    Croatian: /[a-zA-ZčćžšđČĆŽŠĐ]/g,
-    Czech: /[a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ]/g,
-    Danish: /[a-zA-ZæøåÆØÅ]/g,
-    Dutch: /[a-zA-Zéëèêïî]/g,
-    English: /[a-zA-Z]/g,
-    Esperanto: /[a-zA-ZĉĝĥĵŝŭĈĜĤĴŜŬ]/g,
-    Estonian: /[a-zA-ZäöüõšžÄÖÜÕŠŽ]/g,
-    Filipino: /[a-zA-Z]/g,
-    Finnish: /[a-zA-ZäöÄÖ]/g,
-    French: /[a-zA-ZàâçéèêëîïôûùüÿñÀÂÇÉÈÊËÎÏÔÛÙÜŸÑ]/g,
-    Frisian: /[a-zA-Z]/g,
-    Galician: /[a-zA-ZáéíóúÁÉÍÓÚñÑ]/g,
-    Georgian: /[\u10A0-\u10FF]/g,
-    German: /[a-zA-ZäöüÄÖÜß]/g,
-    Greek: /[\u0370-\u03FF]/g,
-    Gujarati: /[\u0A80-\u0AFF]/g,
-    HaitianCreole: /[a-zA-Z]/g,
-    Hausa: /[a-zA-Z]/g,
-    Hawaiian: /[a-zA-Zʻ]/g,
-    Hebrew: /[\u0590-\u05FF]/g,
     Hindi: /[\u0900-\u097F]/g,
-    Hmong: /[a-zA-Z]/g,
-    Hungarian: /[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ]/g,
-    Icelandic: /[a-zA-ZáéíóúýþæöÁÉÍÓÚÝÞÆÖ]/g,
-    Igbo: /[a-zA-Z]/g,
-    Indonesian: /[a-zA-Z]/g,
-    Irish: /[a-zA-ZáéíóúÁÉÍÓÚ]/g,
-    Italian: /[a-zA-ZàèéìíîòóùúÀÈÉÌÍÎÒÓÙÚ]/g,
-    Japanese: /[\u3040-\u309F\u30A0-\u30FF]/g,
-    Javanese: /[\uA980-\uA9DF]/g,
-    Kannada: /[\u0C80-\u0CFF]/g,
-    Kazakh: /[\u0400-\u04FF]/g,
-    Khmer: /[\u1780-\u17FF]/g,
-    Korean: /[\uAC00-\uD7AF]/g,
-    Kurdish: /[a-zA-ZçğıöşüÇĞİÖŞÜ]/g,
-    Kyrgyz: /[\u0400-\u04FF]/g,
-    Lao: /[\u0E80-\u0EFF]/g,
-    Latin: /[a-zA-Z]/g,
-    Latvian: /[a-zA-ZāčēģīķļņšūžĀČĒĢĪĶĻŅŠŪŽ]/g,
-    Lithuanian: /[a-zA-ZąčęėįšųūžĄČĘĖĮŠŲŪŽ]/g,
-    Luxembourgish: /[a-zA-ZäöüÄÖÜ]/g,
-    Macedonian: /[\u0400-\u04FF]/g,
-    Malagasy: /[a-zA-Z]/g,
-    Malay: /[a-zA-Z]/g,
-    Malayalam: /[\u0D00-\u0D7F]/g,
-    Maltese: /[a-zA-ZħĠĦŻ]/g,
-    Maori: /[a-zA-Z]/g,
-    Marathi: /[\u0900-\u097F]/g,
-    Mongolian: /[\u1800-\u18AF]/g,
-    Myanmar: /[\u1000-\u109F]/g,
-    Nepali: /[\u0900-\u097F]/g,
-    Norwegian: /[a-zA-ZæøåÆØÅ]/g,
-    Pashto: /[\u0600-\u06FF]/g,
-    Persian: /[\u0600-\u06FF]/g,
-    Polish: /[a-zA-ZąćęłńóśżźĄĆĘŁŃÓŚŻŹ]/g,
-    Portuguese: /[a-zA-ZãõáéíóúâêîôûçÃÕÁÉÍÓÚÂÊÎÔÛÇ]/g,
-    Punjabi: /[\u0A00-\u0A7F]/g,
-    Romanian: /[a-zA-ZăâîșțĂÂÎȘȚ]/g,
-    Russian: /[\u0400-\u04FF]/g,
-    Samoan: /[a-zA-Z]/g,
-    ScottishGaelic: /[a-zA-Z]/g,
-    Serbian: /[\u0400-\u04FF]/g,
-    Sesotho: /[a-zA-Z]/g,
-    Shona: /[a-zA-Z]/g,
-    Sindhi: /[\u0600-\u06FF]/g,
-    Sinhala: /[\u0D80-\u0DFF]/g,
-    Slovak: /[a-zA-ZáäčďéíľĺňóôŕšťúýžÁÄČĎÉÍĽĹŇÓÔŔŠŤÚÝŽ]/g,
-    Slovenian: /[a-zA-ZčšžČŠŽ]/g,
-    Somali: /[a-zA-Z]/g,
-    Spanish: /[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ]/g,
-    Sundanese: /[a-zA-Z]/g,
-    Swahili: /[a-zA-Z]/g,
-    Swedish: /[a-zA-ZåäöÅÄÖ]/g,
-    Tajik: /[\u0400-\u04FF]/g,
-    Tamil: /[\u0B80-\u0BFF]/g,
-    Telugu: /[\u0C00-\u0C7F]/g,
-    Thai: /[\u0E00-\u0E7F]/g,
+    Arabic: /[\u0600-\u06FF]/g,
+    Chinese: /[\u4e00-\u9fff]/g,
+    Japanese: /[\u3040-\u309f\u30a0-\u30ff]/g,
+    Portuguese: /[ãõáéíóúâêîôûçÃÕÁÉÍÓÚÂÊÎÔÛÇ]/gi,
     Turkish: /[çğıöşüÇĞİÖŞÜ]/g,
-    Ukrainian: /[\u0400-\u04FF]/g,
-    Urdu: /[\u0600-\u06FF]/g,
-    Uzbek: /[a-zA-Z]/g,
-    Vietnamese: /[a-zA-ZàáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/g,
-    Welsh: /[a-zA-ZŵŴŷŶ]/g,
-    Xhosa: /[a-zA-Z]/g,
-    Yiddish: /[\u0590-\u05FF]/g,
-    Yoruba: /[a-zA-Zẹọṣńàì]/g,
-    Zulu: /[a-zA-Z]/g,
+    German: /[äöüÄÖÜß]/g,
+    English: /[a-zA-Z]/g
   };
 
   const scores: { [key: string]: number } = {};
@@ -277,13 +120,24 @@ export const detectLanguage = async (text: string): Promise<string> => {
     scores[lang] = matches ? matches.length : 0;
   }
 
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  const topLanguage = sorted[0][1] > 0 ? sorted[0][0] : "English";
+  const totalLetters = Object.values(scores).reduce((sum, count) => sum + count, 0);
+  const englishRatio = totalLetters > 0 ? scores.English / totalLetters : 0;
 
-  return topLanguage;
+  if (englishRatio > 0.5) return "English";
+  if (scores.Bengali > 0) return "Bengali";
+  if (scores.Hindi > 0) return "Hindi";
+  if (scores.Arabic > 0) return "Arabic";
+  if (scores.Chinese > 0) return "Chinese";
+  if (scores.Japanese > 0) return "Japanese";
+  if (scores.Portuguese > 0) return "Portuguese";
+  if (scores.Turkish > 0) return "Turkish";
+  if (scores.German > 0) return "German";
+  if (scores.English > 0) return "English";
+
+  return "English";
 };
 
-// Logging function
+// Log conversation function
 export const logConversation = async (messages: unknown[]) => {
   console.log("Conversation logged:", messages);
 };
