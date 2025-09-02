@@ -63,7 +63,7 @@ This is for informational purposes only. Please consult a certified healthcare p
         }
       ],
       generationConfig: {
-        temperature: 0.9, // more personality & variation
+        temperature: 0.9,
         topK: 50,
         topP: 0.95,
         maxOutputTokens: 1024
@@ -110,7 +110,8 @@ export const detectLanguage = async (text: string): Promise<string> => {
     Portuguese: /[ãõáéíóúâêîôûçÃÕÁÉÍÓÚÂÊÎÔÛÇ]/gi,
     Turkish: /[çğıöşüÇĞİÖŞÜ]/g,
     German: /[äöüÄÖÜß]/g,
-    English: /[a-zA-Z]/g
+    English: /[a-zA-Z]/g,
+    Estonian: /[A-Za-zÄäÖöÕõÜüŠšŽž]/g,
   };
 
   const scores: { [key: string]: number } = {};
@@ -132,6 +133,7 @@ export const detectLanguage = async (text: string): Promise<string> => {
   if (scores.Portuguese > 0) return "Portuguese";
   if (scores.Turkish > 0) return "Turkish";
   if (scores.German > 0) return "German";
+  if (scores.Estonian > 0) return "Estonian";
   if (scores.English > 0) return "English";
 
   return "English";
