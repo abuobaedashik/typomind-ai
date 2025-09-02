@@ -112,6 +112,7 @@ export const detectLanguage = async (text: string): Promise<string> => {
     German: /[äöüÄÖÜß]/g,
     English: /[a-zA-Z]/g,
     Estonian: /[A-Za-zÄäÖöÕõÜüŠšŽž]/g,
+    Albanian: /[A-Za-zÇçËë]/g,
   };
 
   const scores: { [key: string]: number } = {};
@@ -134,6 +135,7 @@ export const detectLanguage = async (text: string): Promise<string> => {
   if (scores.Turkish > 0) return "Turkish";
   if (scores.German > 0) return "German";
   if (scores.Estonian > 0) return "Estonian";
+  if(scores.Albanian > 0) return "Albanian"
   if (scores.English > 0) return "English";
 
   return "English";
