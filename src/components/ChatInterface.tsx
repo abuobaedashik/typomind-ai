@@ -130,17 +130,18 @@ const ChatInterface: React.FC = () => {
                 className={`p-1.5 sm:p-2 rounded-full ${
                   message.sender === "user"
                     ? "bg-blue-600 text-white"
-                    : "bg-white text-white"
+                    : " text-white"
                 }`}
               >
                 {message.sender === "user" ? (
                   <User className="w-4 h-4 sm:w-4 sm:h-4" />
                 ) : (
                   // <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
-                  // <img src={bot} alt="bot" className="rounded-full w-18 h-18 sm:w-4 sm:h-4" />
-                  <div className="w-6 h-6 border rounded-full">
-                    <img src={bot} alt="bot" className="w-6 h-6 rounded-full" />
-                  </div>
+                   <div className="flex items-center justify-center w-8 h-8 bg-[#D91656] rounded-full">
+                        <img src={bot} alt="bot" className="w-4 h-4 rounded-full " />
+                   </div>
+                //  <Bot className="w-8 h-8 sm:w-4 sm:h-4" />
+                //  <img src={bot} alt="bot" className="object-cover object-center w-5 h-5 p-3 border rounded-full sm:w-4 sm:h-4" />
                 )}
               </div>
               <div
@@ -203,11 +204,11 @@ const ChatInterface: React.FC = () => {
             <Send className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
-        <div className="flex items-center mt-1 sm:mt-2 text-[10px] sm:text-xs text-gray-500">
+        {/* <div className="flex items-center mt-1 sm:mt-2 text-[10px] sm:text-xs text-gray-500">
           <AlertCircle className="w-3 h-3 mr-1 font-bold text-white" />
           This is for informational purposes only. Always consult healthcare
           professionals.
-        </div>
+        </div> */}
       </div>
     </div>
   );

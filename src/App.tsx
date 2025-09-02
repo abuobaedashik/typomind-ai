@@ -89,6 +89,8 @@ function App() {
                     <option>German</option>
                     <option>Turkish</option>
                     <option>Portuguese</option>
+                    <option>Japanese</option>
+                    <option> Arabic</option>
                   </select>
                 </div>
               </nav>
@@ -127,18 +129,200 @@ function App() {
                   ))}
 
                   <div className="mt-auto">
-                    <div className="mt-3 text-[#ffffff] text-sm">Available Language</div>
+                    <div className="mt-3 text-[#ffffff] text-sm">
+                      Available Language
+                    </div>
                     <select
                       defaultValue="English"
                       className="hidden mt-2 border-none w-28 select select-primary md:block"
-                    >
-                      <option>English</option>
+                    >  
+                      <option>Afrikaans</option>
+                      <option>Albanian</option>
+                      <option>Amharic</option>
+                      <option>Arabic</option>
+                      <option>Armenian</option>
+                      <option>Azerbaijani</option>
+                      <option>Basque</option>
+                      <option>Belarusian</option>
                       <option>Bengali</option>
-                      <option>Hindi</option>
-                      <option>Chinese</option>
+                      <option>Bosnian</option>
+                      <option>Bulgarian</option>
+                      <option>Catalan</option>
+                      <option>Cebuano</option>
+                      <option>Chichewa</option>
+                      <option>Chinese (Simplified)</option>
+                      <option>Chinese (Traditional)</option>
+                      <option>Corsican</option>
+                      <option>Croatian</option>
+                      <option>Czech</option>
+                      <option>Danish</option>
+                      <option>Dutch</option>
+                      <option>English</option>
+                      <option>Esperanto</option>
+                      <option>Estonian</option>
+                      <option>Filipino</option>
+                      <option>Finnish</option>
+                      <option>French</option>
+                      <option>Frisian</option>
+                      <option>Galician</option>
+                      <option>Georgian</option>
                       <option>German</option>
-                      <option>Turkish</option>
+                      <option>Greek</option>
+                      <option>Gujarati</option>
+                      <option>Haitian Creole</option>
+                      <option>Hausa</option>
+                      <option>Hawaiian</option>
+                      <option>Hebrew</option>
+                      <option>Hindi</option>
+                      <option>Hmong</option>
+                      <option>Hungarian</option>
+                      <option>Icelandic</option>
+                      <option>Igbo</option>
+                      <option>Indonesian</option>
+                      <option>Irish</option>
+                      <option>Italian</option>
+                      <option>Japanese</option>
+                      <option>Javanese</option>
+                      <option>Kannada</option>
+                      <option>Kazakh</option>
+                      <option>Khmer</option>
+                      <option>Korean</option>
+                      <option>Kurdish (Kurmanji)</option>
+                      <option>Kyrgyz</option>
+                      <option>Lao</option>
+                      <option>Latin</option>
+                      <option>Latvian</option>
+                      <option>Lithuanian</option>
+                      <option>Luxembourgish</option>
+                      <option>Macedonian</option>
+                      <option>Malagasy</option>
+                      <option>Malay</option>
+                      <option>Malayalam</option>
+                      <option>Maltese</option>
+                      <option>Maori</option>
+                      <option>Marathi</option>
+                      <option>Mongolian</option>
+                      <option>Myanmar (Burmese)</option>
+                      <option>Nepali</option>
+                      <option>Norwegian</option>
+                      <option>Pashto</option>
+                      <option>Persian</option>
+                      <option>Polish</option>
                       <option>Portuguese</option>
+                      <option>Punjabi</option>
+                      <option>Romanian</option>
+                      <option>Russian</option>
+                      <option>Samoan</option>
+                      <option>Scottish Gaelic</option>
+                      <option>Serbian</option>
+                      <option>Sesotho</option>
+                      <option>Shona</option>
+                      <option>Sindhi</option>
+                      <option>Sinhala</option>
+                      <option>Slovak</option>
+                      <option>Slovenian</option>
+                      <option>Somali</option>
+                      <option>Spanish</option>
+                      <option>Sundanese</option>
+                      <option>Swahili</option>
+                      <option>Swedish</option>
+                      <option>Tajik</option>
+                      <option>Tamil</option>
+                      <option>Telugu</option>
+                      <option>Thai</option>
+                      <option>Turkish</option>
+                      <option>Ukrainian</option>
+                      <option>Urdu</option>
+                      <option>Uzbek</option>
+                      <option>Vietnamese</option>
+                      <option>Welsh</option>
+                      <option>Xhosa</option>
+                      <option>Yiddish</option>
+                      <option>Yoruba</option>
+                      <option>Zulu</option>    
+{/* 
+Esperanto
+Estonian
+Filipino
+Finnish
+French
+Frisian
+Galician
+Georgian
+German
+Greek
+Gujarati
+Haitian Creole
+Hausa
+Hawaiian
+Hebrew
+Hindi
+Hmong
+Hungarian
+Icelandic
+Igbo
+Indonesian
+Irish
+Italian
+Japanese
+Javanese
+Kannada
+Kazakh
+Khmer
+Korean
+Kurdish (Kurmanji)
+Kyrgyz
+Lao
+Latin
+Latvian
+Lithuanian
+Luxembourgish
+Macedonian
+Malagasy
+Malay
+Malayalam
+Maltese
+Maori
+Marathi
+Mongolian
+Myanmar (Burmese)
+Nepali
+Norwegian
+Pashto
+Persian
+Polish
+Portuguese
+Punjabi
+Romanian
+Russian
+Samoan
+Scottish Gaelic
+Serbian
+Sesotho
+Shona
+Sindhi
+Sinhala
+Slovak
+Slovenian
+Somali
+Spanish
+Sundanese
+Swahili
+Swedish
+Tajik
+Tamil
+Telugu
+Thai
+Turkish
+Ukrainian
+Urdu
+Uzbek
+Vietnamese
+Welsh
+Xhosa
+Yiddish
+Yoruba
+Zulu  */}
                     </select>
                   </div>
                 </nav>

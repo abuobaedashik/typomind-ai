@@ -81,7 +81,7 @@ This is for informational purposes only. Please consult a certified healthcare p
     const data: GeminiResponse = await response.json();
 
     if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      let result = data.candidates[0].content.parts[0].text.trim();
+      const result = data.candidates[0].content.parts[0].text.trim();
 
       // Avoid identical repeats
       if (previousResponses.has(result)) {
